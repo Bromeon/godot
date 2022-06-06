@@ -199,15 +199,15 @@ typedef uint64_t (*GDNativeExtensionClassGetRID)(GDExtensionClassInstancePtr p_i
 
 typedef struct {
 	uint32_t type;
-	const char *name;
-	const char *class_name;
+	GDNativeStringPtr name; // required
+	GDNativeStringNamePtr class_name; // optional
 	uint32_t hint;
-	const char *hint_string;
+	GDNativeStringPtr hint_string; // optional
 	uint32_t usage;
 } GDNativePropertyInfo;
 
 typedef struct {
-	const char *name;
+	GDNativeStringPtr name; // required
 	GDNativePropertyInfo return_value;
 	uint32_t flags; // From GDNativeExtensionClassMethodFlags
 	int32_t id;

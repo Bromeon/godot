@@ -186,6 +186,22 @@ struct PropertyInfo {
 			type(Variant::OBJECT),
 			class_name(p_class_name) {}
 
+	explicit PropertyInfo(const GDNativePropertyInfo &pinfo) :
+			type((Variant::Type)pinfo.type),
+			name(*(String *)pinfo.name),
+			class_name(),
+			hint((PropertyHint)pinfo.hint),
+			hint_string(),
+			usage(pinfo.usage) {
+		// Emulates the behavior of String/StringName constructor, when accepting char* null pointers
+		if (pinfo.class_name) {
+			class_name = *(StringName *)pinfo.class_name;
+		}
+		if (pinfo.hint_string) {
+			hint_string = *(String *)pinfo.hint_string;
+		}
+	}
+
 	bool operator==(const PropertyInfo &p_info) const {
 		return ((type == p_info.type) &&
 				(name == p_info.name) &&
