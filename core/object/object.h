@@ -31,7 +31,6 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "core/extension/gdnative_interface.h"
 #include "core/object/message_queue.h"
 #include "core/object/object_id.h"
 #include "core/os/rw_lock.h"
@@ -47,6 +46,11 @@
 
 template <typename T>
 class TypedArray;
+
+struct GDNativePropertyInfo;
+struct ObjectNativeExtension;
+struct GDNativeInstanceBindingCallbacks;
+typedef void *GDExtensionClassInstancePtr;
 
 enum PropertyHint {
 	PROPERTY_HINT_NONE, ///< no hint provided.
@@ -190,13 +194,7 @@ struct PropertyInfo {
 			type(Variant::OBJECT),
 			class_name(p_class_name) {}
 
-	explicit PropertyInfo(const GDNativePropertyInfo &pinfo) :
-			type((Variant::Type)pinfo.type),
-			name(pinfo.name),
-			class_name(pinfo.class_name), // can be null
-			hint((PropertyHint)pinfo.hint),
-			hint_string(pinfo.hint_string), // can be null
-			usage(pinfo.usage) {}
+	explicit PropertyInfo(const GDNativePropertyInfo &pinfo);
 
 	bool operator==(const PropertyInfo &p_info) const {
 		return ((type == p_info.type) &&
@@ -288,41 +286,6 @@ struct MethodInfo {
 
 // API used to extend in GDNative and other C compatible compiled languages.
 class MethodBind;
-
-struct ObjectNativeExtension {
-	ObjectNativeExtension *parent = nullptr;
-	List<ObjectNativeExtension *> children;
-	StringName parent_class_name;
-	StringName class_name;
-	bool editor_class = false;
-	GDNativeExtensionClassSet set;
-	GDNativeExtensionClassGet get;
-	GDNativeExtensionClassGetPropertyList get_property_list;
-	GDNativeExtensionClassFreePropertyList free_property_list;
-	GDNativeExtensionClassPropertyCanRevert property_can_revert;
-	GDNativeExtensionClassPropertyGetRevert property_get_revert;
-	GDNativeExtensionClassNotification notification;
-	GDNativeExtensionClassToString to_string;
-	GDNativeExtensionClassReference reference;
-	GDNativeExtensionClassReference unreference;
-	GDNativeExtensionClassGetRID get_rid;
-
-	_FORCE_INLINE_ bool is_class(const String &p_class) const {
-		const ObjectNativeExtension *e = this;
-		while (e) {
-			if (p_class == e->class_name.operator String()) {
-				return true;
-			}
-			e = e->parent;
-		}
-		return false;
-	}
-	void *class_userdata = nullptr;
-
-	GDNativeExtensionClassCreateInstance create_instance;
-	GDNativeExtensionClassFreeInstance free_instance;
-	GDNativeExtensionClassGetVirtual get_virtual;
-};
 
 #define GDVIRTUAL_CALL(m_name, ...) _gdvirtual_##m_name##_call<false>(__VA_ARGS__)
 #define GDVIRTUAL_CALL_PTR(m_obj, m_name, ...) m_obj->_gdvirtual_##m_name##_call<false>(__VA_ARGS__)
@@ -616,12 +579,7 @@ private:
 	bool type_is_reference = false;
 
 	std::mutex _instance_binding_mutex;
-	struct InstanceBinding {
-		void *binding = nullptr;
-		void *token = nullptr;
-		GDNativeInstanceBindingFreeCallback free_callback = nullptr;
-		GDNativeInstanceBindingReferenceCallback reference_callback = nullptr;
-	};
+	struct InstanceBinding;
 	InstanceBinding *_instance_bindings = nullptr;
 	uint32_t _instance_binding_count = 0;
 
@@ -630,7 +588,7 @@ private:
 protected:
 	_FORCE_INLINE_ bool _instance_binding_reference(bool p_reference) {
 		bool can_die = true;
-		if (_instance_bindings) {
+		/*if (_instance_bindings) {
 			_instance_binding_mutex.lock();
 			for (uint32_t i = 0; i < _instance_binding_count; i++) {
 				if (_instance_bindings[i].reference_callback) {
@@ -640,7 +598,8 @@ protected:
 				}
 			}
 			_instance_binding_mutex.unlock();
-		}
+		}*/
+		/// !!!!!!!!!!!!!!!! FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!
 		return can_die;
 	}
 
@@ -775,25 +734,28 @@ public:
 	static String get_parent_class_static() { return String(); }
 
 	virtual String get_class() const {
-		if (_extension) {
-			return _extension->class_name.operator String();
-		}
+		// FIXME
+//		if (_extension) {
+//			return _extension->class_name.operator String();
+//		}
 		return "Object";
 	}
 	virtual String get_save_class() const { return get_class(); } //class stored when saving
 
 	virtual bool is_class(const String &p_class) const {
-		if (_extension && _extension->is_class(p_class)) {
-			return true;
-		}
+		// FIXME
+//		if (_extension && _extension->is_class(p_class)) {
+//			return true;
+//		}
 		return (p_class == "Object");
 	}
 	virtual bool is_class_ptr(void *p_ptr) const { return get_class_ptr_static() == p_ptr; }
 
 	_FORCE_INLINE_ const StringName &get_class_name() const {
-		if (_extension) {
-			return _extension->class_name;
-		}
+		// FIXME
+//		if (_extension) {
+//			return _extension->class_name;
+//		}
 		if (!_class_ptr) {
 			return *_get_class_namev();
 		} else {

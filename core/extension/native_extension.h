@@ -33,6 +33,7 @@
 
 #include "core/extension/gdnative_interface.h"
 #include "core/io/resource_loader.h"
+#include "core/object/object_native_extension.h"
 #include "core/object/ref_counted.h"
 
 class NativeExtension : public Resource {

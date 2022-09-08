@@ -31,6 +31,7 @@
 #include "class_db.h"
 
 #include "core/config/engine.h"
+#include "core/object/object_native_extension.h"
 #include "core/os/mutex.h"
 #include "core/version.h"
 

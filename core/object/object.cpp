@@ -34,6 +34,7 @@
 #include "core/io/resource.h"
 #include "core/object/class_db.h"
 #include "core/object/message_queue.h"
+#include "core/object/object_native_extension.h"
 #include "core/object/script_language.h"
 #include "core/os/os.h"
 #include "core/string/print_string.h"
@@ -61,6 +62,14 @@ struct _ObjectDebugLock {
 #define OBJ_DEBUG_LOCK
 
 #endif
+
+PropertyInfo::PropertyInfo(const GDNativePropertyInfo &pinfo) :
+		type((Variant::Type)pinfo.type),
+		name(pinfo.name),
+		class_name(pinfo.class_name), // can be null
+		hint((PropertyHint)pinfo.hint),
+		hint_string(pinfo.hint_string), // can be null
+		usage(pinfo.usage) {}
 
 PropertyInfo::operator Dictionary() const {
 	Dictionary d;
@@ -161,6 +170,13 @@ MethodInfo MethodInfo::from_dict(const Dictionary &p_dict) {
 
 	return mi;
 }
+
+struct Object::InstanceBinding {
+	void *binding = nullptr;
+	void *token = nullptr;
+	GDNativeInstanceBindingFreeCallback free_callback = nullptr;
+	GDNativeInstanceBindingReferenceCallback reference_callback = nullptr;
+};
 
 Object::Connection::operator Variant() const {
 	Dictionary d;
