@@ -207,6 +207,8 @@ int _main() {
 }
 
 int main(int argc, char **argv) {
+	malloc(123); // LEAK SIMULIZERER
+
 	// override the arguments for the test handler / if symbol is provided
 	// TEST_MAIN_OVERRIDE
 
