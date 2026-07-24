@@ -425,6 +425,11 @@
             "type": "uint64_t"
         },
         {
+            "name": "GDObjectInstanceID",
+            "kind": "alias",
+            "type": "uint64_t"
+        },
+        {
             "name": "GDExtensionRefPtr",
             "kind": "handle"
         },
