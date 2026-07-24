@@ -40,6 +40,10 @@
                     "value": 0
                 },
                 {
+                    "name": "GDEXTENSION_VARIANT_TYPE_NIL",
+                    "value": 0
+                },
+                {
                     "name": "GDEXTENSION_VARIANT_TYPE_BOOL",
                     "value": 1
                 },
