@@ -7737,6 +7737,22 @@
             "since": "4.1"
         },
         {
+            "name": "object_destroy",
+            "arguments": [
+                {
+                    "name": "p_o",
+                    "type": "GDExtensionObjectPtr",
+                    "description": [
+                        "A pointer to the Object."
+                    ]
+                }
+            ],
+            "description": [
+                "Destroys an Object."
+            ],
+            "since": "4.1"
+        },
+        {
             "name": "global_get_singleton",
             "return_value": {
                 "type": "GDExtensionObjectPtr",
